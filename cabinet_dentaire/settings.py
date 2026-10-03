@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from django.core.exceptions import ImproperlyConfigured
 
 # Charger les variables d'environnement
 load_dotenv()
@@ -30,6 +31,9 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'dev-only-insecure-key-ne-pas-utilis
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() in ('1', 'true', 'yes')
+
+if not DEBUG and not os.getenv('DJANGO_SECRET_KEY'):
+    raise ImproperlyConfigured("DJANGO_SECRET_KEY doit être défini dans .env quand DJANGO_DEBUG=False.")
 
 ALLOWED_HOSTS = [h.strip() for h in os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',') if h.strip()]
 
