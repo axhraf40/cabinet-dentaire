@@ -1,0 +1,93 @@
+{% extends 'gestion_cabinet/base.html' %}
+
+{% block title %}Liste des patients - Cabinet Dentaire{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>Liste des patients</h2>
+        </div>
+        {% if user.secretaire_profile %}
+        <div class="col-auto">
+            <a href="{% url 'patient_create' %}" class="btn btn-primary">
+                <i class="fas fa-user-plus me-2"></i>Nouveau patient
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Barre de recherche -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-center">
+                <div class="col-auto flex-grow-1">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input type="text" name="q" class="form-control" placeholder="Rechercher un patient..." value="{{ search_query }}">
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">Rechercher</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Liste des patients -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Date de naissance</th>
+                            <th>Téléphone</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for patient in patients %}
+                        <tr>
+                            <td>{{ patient.user.last_name }}</td>
+                            <td>{{ patient.user.first_name }}</td>
+                            <td>{{ patient.date_naissance|date:"d/m/Y" }}</td>
+                            <td>{{ patient.telephone }}</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{% url 'patient_detail' patient.id %}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-folder-open me-1"></i>Dossier
+                                    </a>
+                                    <a href="{% url 'rendez_vous_create' %}?patient={{ patient.id }}" class="btn btn-sm btn-success">
+                                        <i class="fas fa-calendar-plus me-1"></i>RDV
+                                    </a>
+                                    {% if user.secretaire_profile %}
+                                    <a href="{% url 'patient_update' patient.id %}" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-user-edit me-1"></i>Modifier
+                                    </a>
+                                    <a href="{% url 'patient_change_password' patient.id %}" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-key me-1"></i>Mot de passe
+                                    </a>
+                                    <a href="{% url 'patient_delete' patient.id %}" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-user-times me-1"></i>Supprimer
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">Aucun patient trouvé.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

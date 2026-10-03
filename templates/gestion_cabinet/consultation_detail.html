@@ -1,0 +1,79 @@
+{% extends 'gestion_cabinet/base.html' %}
+
+{% block title %}Détails consultation - Cabinet Dentaire{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="card-title mb-0">Consultation du {{ consultation.date_consultation|date:"d/m/Y" }}</h4>
+            {% if user.dentiste_profile == consultation.rendez_vous.dentiste %}
+                <a href="{% url 'consultation_update' consultation.pk %}" class="btn btn-light">
+                    <i class="fas fa-edit me-1"></i>Modifier
+                </a>
+            {% endif %}
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5>Informations du patient</h5>
+                    <p><strong>Nom :</strong> {{ consultation.rendez_vous.patient }}</p>
+                    <p><strong>Patient :</strong> {{ consultation.rendez_vous.patient.user.get_full_name }}</p>
+                    <p><strong>Email :</strong> {{ consultation.rendez_vous.patient.user.email }}</p>
+                    <p><strong>Téléphone :</strong> {{ consultation.rendez_vous.patient.telephone }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Informations du rendez-vous</h5>
+                    <p><strong>Date :</strong> {{ consultation.rendez_vous.date_heure|date:"d/m/Y H:i" }}</p>
+                    <p><strong>Dentiste :</strong> {{ consultation.rendez_vous.dentiste }}</p>
+                    <p><strong>Motif :</strong> {{ consultation.rendez_vous.motif }}</p>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h5>Diagnostic</h5>
+                <p class="border rounded p-3 bg-light">{{ consultation.diagnostic }}</p>
+            </div>
+
+            <div class="mb-4">
+                <h5>Traitement</h5>
+                <p class="border rounded p-3 bg-light">{{ consultation.traitement }}</p>
+            </div>
+
+            {% if consultation.facture %}
+                <div class="alert alert-success">
+                    <h5 class="alert-heading">Facture</h5>
+                    <p><strong>Montant :</strong> {{ consultation.facture.montant }} €</p>
+                    <p><strong>Statut :</strong> {{ consultation.facture.get_statut_display }}</p>
+                    {% if consultation.facture.mode_paiement %}
+                        <p><strong>Mode de paiement :</strong> {{ consultation.facture.get_mode_paiement_display }}</p>
+                    {% endif %}
+                    {% if user.secretaire_profile %}
+                        <div class="mt-2">
+                            <a href="{% url 'facture_detail' consultation.facture.id %}" class="btn btn-info btn-sm">
+                                <i class="fas fa-eye me-1"></i>Voir la facture
+                            </a>
+                            <a href="{% url 'facture_update' consultation.facture.id %}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit me-1"></i>Modifier la facture
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            {% elif user.secretaire_profile %}
+                <div class="alert alert-warning">
+                    <p class="mb-0">Aucune facture n'a été créée pour cette consultation.</p>
+                    <a href="{% url 'facture_create' consultation.id %}" class="btn btn-warning mt-2">
+                        <i class="fas fa-file-invoice-dollar me-2"></i>Créer une facture
+                    </a>
+                </div>
+            {% endif %}
+
+            <div class="mt-4">
+                <a href="{% url 'rendez_vous_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>Retour à la liste
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

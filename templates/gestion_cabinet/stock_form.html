@@ -1,0 +1,91 @@
+{% extends 'gestion_cabinet/base.html' %}
+
+{% block title %}
+    {% if action == 'create' %}
+        Ajouter un produit
+    {% else %}
+        Modifier un produit
+    {% endif %}
+    - Cabinet Dentaire
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">
+                    {% if action == 'create' %}
+                        <i class="fas fa-plus me-2"></i>Ajouter un produit
+                    {% else %}
+                        <i class="fas fa-edit me-2"></i>Modifier un produit
+                    {% endif %}
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label" for="id_nom">Nom du produit</label>
+                        <input type="text" name="nom" class="form-control" id="id_nom" value="{{ form.nom.value|default:'' }}" required>
+                        {% if form.nom.errors %}
+                            <div class="invalid-feedback">{{ form.nom.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="id_description">Description</label>
+                        <textarea name="description" class="form-control" id="id_description" rows="3" required>{{ form.description.value|default:'' }}</textarea>
+                        {% if form.description.errors %}
+                            <div class="invalid-feedback">{{ form.description.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label" for="id_quantite">Quantité</label>
+                                <input type="number" name="quantite" class="form-control" id="id_quantite" value="{{ form.quantite.value|default:0 }}" min="0" required>
+                                {% if form.quantite.errors %}
+                                    <div class="invalid-feedback">{{ form.quantite.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label" for="id_seuil_alerte">Seuil d'alerte</label>
+                                <input type="number" name="seuil_alerte" class="form-control" id="id_seuil_alerte" value="{{ form.seuil_alerte.value|default:5 }}" min="1" required>
+                                {% if form.seuil_alerte.errors %}
+                                    <div class="invalid-feedback">{{ form.seuil_alerte.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="id_prix_unitaire">Prix unitaire (€)</label>
+                        <input type="number" name="prix_unitaire" class="form-control" id="id_prix_unitaire" value="{{ form.prix_unitaire.value|default:0 }}" min="0" step="0.01" required>
+                        {% if form.prix_unitaire.errors %}
+                            <div class="invalid-feedback">{{ form.prix_unitaire.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            {% if action == 'create' %}
+                                <i class="fas fa-plus me-2"></i>Ajouter le produit
+                            {% else %}
+                                <i class="fas fa-save me-2"></i>Enregistrer les modifications
+                            {% endif %}
+                        </button>
+                        <a href="{% url 'stock_list' %}" class="btn btn-secondary">
+                            <i class="fas fa-times me-2"></i>Annuler
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

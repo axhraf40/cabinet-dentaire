@@ -1,0 +1,57 @@
+{% extends 'gestion_cabinet/base.html' %}
+
+{% block title %}Paiement - Cabinet Dentaire{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="card-title mb-0">Choisir le mode de paiement</h4>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5>Détails de la facture</h5>
+                        <p><strong>Date consultation :</strong> {{ facture.consultation.date_consultation|date:"d/m/Y" }}</p>
+                        <p><strong>Montant à payer :</strong> {{ facture.montant }}€</p>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-credit-card fa-3x mb-3 text-primary"></i>
+                                    <h5 class="card-title">Carte Bancaire</h5>
+                                    <p class="card-text">Paiement sécurisé par Stripe</p>
+                                    <form action="{% url 'process_paiement_cb' facture.id %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-credit-card me-2"></i>Payer par CB
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-money-bill-wave fa-3x mb-3 text-success"></i>
+                                    <h5 class="card-title">Espèces</h5>
+                                    <p class="card-text">Paiement au cabinet</p>
+                                    <form action="{% url 'process_paiement_especes' facture.id %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="fas fa-money-bill-wave me-2"></i>Payer en espèces
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

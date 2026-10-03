@@ -1,0 +1,139 @@
+{% extends 'gestion_cabinet/base.html' %}
+
+{% block title %}Liste des rendez-vous - Cabinet Dentaire{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>Mes rendez-vous</h2>
+        </div>
+        <div class="col-auto">
+            <a href="{% url 'rendez_vous_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Nouveau rendez-vous
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title mb-0">Liste des rendez-vous</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            {% if not user.patient %}
+                                <th>Patient</th>
+                            {% endif %}
+                            <th>Dentiste</th>
+                            <th>Motif</th>
+                            <th>Statut RDV</th>
+                            {% if user.patient %}
+                                <th>État Facture</th>
+                                <th>Montant</th>
+                            {% endif %}
+                            <th>Statut Paiement</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for rdv in rendez_vous %}
+                        <tr>
+                            <td>{{ rdv.date_heure|date:"d/m/Y H:i" }}</td>
+                            {% if not user.patient %}
+                                <td>{{ rdv.patient }}</td>
+                            {% endif %}
+                            <td>{{ rdv.dentiste }}</td>
+                            <td>{{ rdv.motif }}</td>
+                            <td>
+                                <span class="badge {% if rdv.statut == 'TERMINE' %}bg-success{% elif rdv.statut == 'ANNULE' %}bg-danger{% else %}bg-primary{% endif %}">
+                                    {{ rdv.get_statut_display }}
+                                </span>
+                            </td>
+                            {% if user.patient %}
+                                {% if rdv.consultation and rdv.consultation.facture %}
+                                    <td>
+                                        <span class="badge {% if rdv.consultation.facture.statut == 'PAYE' %}bg-success{% elif rdv.consultation.facture.statut == 'ECHEC' %}bg-danger{% else %}bg-warning{% endif %}">
+                                            {{ rdv.consultation.facture.get_statut_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ rdv.consultation.facture.montant }}€</td>
+                                {% else %}
+                                    <td>-</td>
+                                    <td>-</td>
+                                {% endif %}
+                            {% endif %}
+                            <td>
+                                <span class="badge {% if rdv.statut_paiement == 'REGLE' %}bg-success{% else %}bg-warning{% endif %}">
+                                    {{ rdv.get_statut_paiement_display }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if user.patient %}
+                                    {% if rdv.consultation and rdv.consultation.facture and rdv.consultation.facture.statut == 'EN_ATTENTE' %}
+                                        <a href="{% url 'initier_paiement' rdv.consultation.facture.id %}" class="btn btn-success btn-sm">
+                                            <i class="fas fa-money-bill me-1"></i>Payer
+                                        </a>
+                                    {% endif %}
+                                    {% if rdv.consultation and rdv.consultation.facture %}
+                                        <a href="{% url 'facture_detail' rdv.consultation.facture.id %}" class="btn btn-info btn-sm">
+                                            <i class="fas fa-eye me-1"></i>Détails
+                                        </a>
+                                    {% endif %}
+                                    {% if rdv.statut == 'PROGRAMME' %}
+                                        {% if user.dentiste_profile %}
+                                            <a href="{% url 'consultation_create' rdv.id %}" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-notes-medical me-1"></i>Débuter consultation
+                                            </a>
+                                            <a href="{% url 'rendez_vous_annuler' rdv.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir annuler ce rendez-vous ?')">
+                                                <i class="fas fa-times me-1"></i>Annuler
+                                            </a>
+                                        {% endif %}
+                                    {% endif %}
+                                {% else %}
+                                    {% if rdv.statut == 'PROGRAMME' %}
+                                        <a href="{% url 'rendez_vous_annuler' rdv.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir annuler ce rendez-vous ?')">
+                                            <i class="fas fa-times me-1"></i>Annuler
+                                        </a>
+                                    {% endif %}
+                                    {% if user.dentiste and rdv.statut == 'PROGRAMME' %}
+                                        <a href="{% url 'consultation_create' rdv.id %}" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-notes-medical me-1"></i>Consultation
+                                        </a>
+                                    {% endif %}
+                                    {% if user.secretaire_profile %}
+                                        {% if rdv.statut != 'ANNULE' %}
+                                            <a href="{% url 'definir_montant_rdv' rdv.id %}" class="btn btn-info btn-sm">
+                                                <i class="fas fa-euro-sign me-1"></i>Définir montant
+                                            </a>
+                                            {% if rdv.montant > 0 and rdv.statut_paiement != 'REGLE' %}
+                                                <a href="{% url 'marquer_rdv_paye' rdv.id %}" class="btn btn-success btn-sm">
+                                                    <i class="fas fa-check me-1"></i>Marquer comme payé
+                                                </a>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

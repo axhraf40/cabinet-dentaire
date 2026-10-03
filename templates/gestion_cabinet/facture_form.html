@@ -1,0 +1,44 @@
+{% extends 'gestion_cabinet/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% if is_update %}Modifier{% else %}Nouvelle{% endif %} facture - Cabinet Dentaire{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0">{% if is_update %}Modifier la{% else %}Nouvelle{% endif %} facture</h4>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <h5>Informations de la consultation</h5>
+                    <p><strong>Patient :</strong> {{ consultation.rendez_vous.patient }}</p>
+                    <p><strong>Date :</strong> {{ consultation.date_consultation|date:"d/m/Y H:i" }}</p>
+                    <p><strong>Dentiste :</strong> {{ consultation.rendez_vous.dentiste }}</p>
+                    <p><strong>Traitement :</strong> {{ consultation.traitement }}</p>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>{% if is_update %}Mettre à jour{% else %}Enregistrer{% endif %} la facture
+                        </button>
+                        {% if is_update %}
+                            <a href="{% url 'facture_detail' consultation.facture.id %}" class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i>Annuler
+                            </a>
+                        {% else %}
+                            <a href="{% url 'consultation_detail' consultation.id %}" class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i>Annuler
+                            </a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,90 @@
+[
+    {
+        "model": "gestion_cabinet.produit",
+        "pk": 1,
+        "fields": {
+            "nom": "Gants d'examen en latex",
+            "description": "Gants d'examen non stériles, taille M",
+            "quantite": 500,
+            "seuil_alerte": 100,
+            "prix_unitaire": "0.15"
+        }
+    },
+    {
+        "model": "gestion_cabinet.produit",
+        "pk": 2,
+        "fields": {
+            "nom": "Masques chirurgicaux",
+            "description": "Masques chirurgicaux 3 plis",
+            "quantite": 200,
+            "seuil_alerte": 50,
+            "prix_unitaire": "0.25"
+        }
+    },
+    {
+        "model": "gestion_cabinet.produit",
+        "pk": 3,
+        "fields": {
+            "nom": "Anesthésique local",
+            "description": "Carpules d'articaïne 4% avec épinéphrine",
+            "quantite": 100,
+            "seuil_alerte": 20,
+            "prix_unitaire": "2.50"
+        }
+    },
+    {
+        "model": "gestion_cabinet.produit",
+        "pk": 4,
+        "fields": {
+            "nom": "Composite dentaire",
+            "description": "Composite photopolymérisable universel A2",
+            "quantite": 15,
+            "seuil_alerte": 5,
+            "prix_unitaire": "45.00"
+        }
+    },
+    {
+        "model": "gestion_cabinet.produit",
+        "pk": 5,
+        "fields": {
+            "nom": "Fraises diamantées",
+            "description": "Fraises diamantées pour turbine, différentes formes",
+            "quantite": 50,
+            "seuil_alerte": 10,
+            "prix_unitaire": "3.50"
+        }
+    },
+    {
+        "model": "gestion_cabinet.produit",
+        "pk": 6,
+        "fields": {
+            "nom": "Fil de suture",
+            "description": "Fil de suture résorbable 4/0",
+            "quantite": 30,
+            "seuil_alerte": 8,
+            "prix_unitaire": "5.75"
+        }
+    },
+    {
+        "model": "gestion_cabinet.produit",
+        "pk": 7,
+        "fields": {
+            "nom": "Pâte prophylactique",
+            "description": "Pâte de polissage pour détartrage",
+            "quantite": 12,
+            "seuil_alerte": 3,
+            "prix_unitaire": "15.00"
+        }
+    },
+    {
+        "model": "gestion_cabinet.produit",
+        "pk": 8,
+        "fields": {
+            "nom": "Rouleaux de coton",
+            "description": "Rouleaux de coton dentaire stériles",
+            "quantite": 1000,
+            "seuil_alerte": 200,
+            "prix_unitaire": "0.05"
+        }
+    }
+] 

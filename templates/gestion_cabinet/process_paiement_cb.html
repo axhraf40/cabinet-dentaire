@@ -1,0 +1,104 @@
+{% extends 'gestion_cabinet/base.html' %}
+
+{% block title %}Paiement par Carte Bancaire - Cabinet Dentaire{% endblock %}
+
+{% block extra_head %}
+<script src="https://js.stripe.com/v3/"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="card-title mb-0">Paiement par Carte Bancaire</h4>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5>Détails de la transaction</h5>
+                        <p><strong>Référence :</strong> {{ facture.reference_transaction }}</p>
+                        <p><strong>Montant :</strong> {{ facture.montant }}€</p>
+                    </div>
+
+                    <form id="payment-form">
+                        <div class="mb-3">
+                            <div id="card-element" class="form-control" style="height: 2.4em; padding-top: .7em;">
+                                <!-- Stripe Card Element will be inserted here -->
+                            </div>
+                            <div id="card-errors" class="invalid-feedback d-block" role="alert"></div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button id="submit-button" class="btn btn-primary">
+                                <i class="fas fa-lock me-2"></i>Payer {{ facture.montant }}€
+                            </button>
+                            <a href="{% url 'initier_paiement' facture.id %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Retour
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Créer une instance de Stripe
+    const stripe = Stripe('{{ stripe_public_key }}');
+    const elements = stripe.elements();
+
+    // Créer l'élément de carte
+    const card = elements.create('card', {
+        style: {
+            base: {
+                fontSize: '16px',
+                color: '#32325d',
+            },
+        },
+    });
+
+    // Monter l'élément de carte dans le DOM
+    card.mount('#card-element');
+
+    // Gérer les erreurs de validation en temps réel
+    card.addEventListener('change', function(event) {
+        const displayError = document.getElementById('card-errors');
+        if (event.error) {
+            displayError.textContent = event.error.message;
+        } else {
+            displayError.textContent = '';
+        }
+    });
+
+    // Gérer la soumission du formulaire
+    const form = document.getElementById('payment-form');
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const submitButton = document.getElementById('submit-button');
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Traitement en cours...';
+
+        stripe.confirmCardPayment('{{ client_secret }}', {
+            payment_method: {
+                card: card,
+            }
+        }).then(function(result) {
+            if (result.error) {
+                const errorElement = document.getElementById('card-errors');
+                errorElement.textContent = result.error.message;
+                submitButton.disabled = false;
+                submitButton.innerHTML = '<i class="fas fa-lock me-2"></i>Payer {{ facture.montant }}€';
+            } else {
+                if (result.paymentIntent.status === 'succeeded') {
+                    window.location.href = "{% url 'paiement_success' facture.id %}";
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %} 
