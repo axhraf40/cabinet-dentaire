@@ -1,0 +1,76 @@
+{% extends 'gestion_cabinet/base.html' %}
+
+{% block title %}
+    {% if type_mouvement == 'ENTREE' %}
+        Ajouter du stock
+    {% else %}
+        Retirer du stock
+    {% endif %}
+    - Cabinet Dentaire
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header {% if type_mouvement == 'ENTREE' %}bg-success{% else %}bg-warning{% endif %} text-white">
+                <h5 class="card-title mb-0">
+                    {% if type_mouvement == 'ENTREE' %}
+                        <i class="fas fa-plus me-2"></i>Ajouter du stock
+                    {% else %}
+                        <i class="fas fa-minus me-2"></i>Retirer du stock
+                    {% endif %}
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% if produit %}
+                        <div class="mb-3">
+                            <label class="form-label">Produit</label>
+                            <input type="text" class="form-control" value="{{ produit.nom }}" readonly>
+                            <input type="hidden" name="produit" value="{{ produit.id }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Stock actuel</label>
+                            <input type="text" class="form-control" value="{{ produit.quantite }}" readonly>
+                        </div>
+                    {% else %}
+                        <div class="mb-3">
+                            {{ form.produit.label_tag }}
+                            {{ form.produit }}
+                            {% if form.produit.errors %}
+                                <div class="invalid-feedback">{{ form.produit.errors }}</div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                    <input type="hidden" name="type_mouvement" value="{{ type_mouvement }}">
+                    
+                    <div class="mb-3">
+                        <label class="form-label" for="id_quantite">Quantité</label>
+                        <input type="number" name="quantite" class="form-control" id="id_quantite" min="1" required>
+                        {% if form.quantite.errors %}
+                            <div class="invalid-feedback">{{ form.quantite.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn {% if type_mouvement == 'ENTREE' %}btn-success{% else %}btn-warning{% endif %}">
+                            {% if type_mouvement == 'ENTREE' %}
+                                <i class="fas fa-plus me-2"></i>Ajouter au stock
+                            {% else %}
+                                <i class="fas fa-minus me-2"></i>Retirer du stock
+                            {% endif %}
+                        </button>
+                        <a href="{% url 'stock_list' %}" class="btn btn-secondary">
+                            <i class="fas fa-times me-2"></i>Annuler
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

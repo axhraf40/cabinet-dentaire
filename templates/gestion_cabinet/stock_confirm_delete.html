@@ -1,0 +1,42 @@
+{% extends 'gestion_cabinet/base.html' %}
+
+{% block title %}Supprimer un produit - Cabinet Dentaire{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="card-title mb-0">Confirmer la suppression</h4>
+                </div>
+                <div class="card-body">
+                    <p class="lead">Êtes-vous sûr de vouloir supprimer le produit "{{ produit.nom }}" ?</p>
+                    <p>Cette action est irréversible.</p>
+                    
+                    <div class="alert alert-warning">
+                        <h5 class="alert-heading">Détails du produit :</h5>
+                        <ul class="mb-0">
+                            <li>Nom : {{ produit.nom }}</li>
+                            <li>Quantité actuelle : {{ produit.quantite }}</li>
+                            <li>Seuil d'alerte : {{ produit.seuil_alerte }}</li>
+                        </ul>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash-alt me-2"></i>Confirmer la suppression
+                            </button>
+                            <a href="{% url 'stock_list' %}" class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i>Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

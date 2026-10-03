@@ -1,0 +1,233 @@
+{% extends 'gestion_cabinet/base.html' %}
+{% load static %}
+
+{% block title %}Accueil - Cabinet Dentaire{% endblock %}
+
+{% block content %}
+<style>
+    .hero-image {
+        background-image: url('{% static 'images/hero-image.png' %}');
+        height: 70vh;
+        background-size: cover;
+        background-position: center;
+        position: relative;
+    }
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+    }
+    .team-member-image {
+        height: 400px;
+        object-fit: cover;
+    }
+    .specialty-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        overflow: hidden;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 30px;
+    }
+    .specialty-card .card-img-top {
+        height: 200px;
+        object-fit: cover;
+        width: 100%;
+    }
+    .specialty-card .card-body {
+        padding: 25px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+    .specialty-card .card-title {
+        font-size: 24px;
+        margin-bottom: 15px;
+        color: #333;
+        font-weight: 600;
+    }
+    .specialty-description {
+        color: #666;
+        font-size: 15px;
+        line-height: 1.6;
+        margin-bottom: 25px;
+        flex-grow: 1;
+    }
+    .btn-rdv {
+        display: inline-block;
+        padding: 10px 30px;
+        border: 1px solid #000;
+        color: #000;
+        background-color: transparent;
+        text-transform: uppercase;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        margin-top: auto;
+    }
+    .btn-rdv:hover {
+        background-color: #000;
+        color: #fff;
+        text-decoration: none;
+    }
+    .btn-hero-rdv {
+        display: inline-block;
+        padding: 15px 40px;
+        background-color: #007bff;
+        color: white;
+        text-transform: uppercase;
+        font-size: 16px;
+        font-weight: 600;
+        border: 2px solid #007bff;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    .btn-hero-rdv:hover {
+        background-color: transparent;
+        color: #007bff;
+        text-decoration: none;
+    }
+    .specialites {
+        background-color: #f8f9fa;
+        padding: 80px 0;
+    }
+    .specialites h2 {
+        margin-bottom: 50px;
+        font-size: 36px;
+        font-weight: 600;
+    }
+    .map-container {
+        width: 100%;
+        height: 400px;
+        border: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+    .map-iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        display: block;
+    }
+</style>
+
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="hero-image">
+        <div class="hero-overlay">
+            <div class="container h-100">
+                <div class="row h-100 align-items-center">
+                    <div class="col-lg-12 text-center text-white">
+                        <h1 class="display-3 mb-4">Bienvenue au Cabinet Dentaire</h1>
+                        <p class="lead mb-4">Votre santé dentaire est notre priorité.</p>
+                        <p class="lead mb-4">Grâce à nos différentes spécialités, nous vous accompagnons pour rétablir un nouveau sourire, celui que vous méritez!</p>
+                        <a href="{% url 'rendez_vous_create' %}" class="btn-hero-rdv">
+                            PRENDRE UN RENDEZ-VOUS
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Nos Spécialités Section -->
+<section class="specialites">
+    <div class="container">
+        <h2 class="text-center">Nos Spécialités</h2>
+        <div class="row">
+            {% for specialite in specialites %}
+            <div class="col-md-6 col-lg-3">
+                <div class="specialty-card">
+                    <img src="{{ specialite.image.url }}" class="card-img-top" alt="{{ specialite.nom }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ specialite.nom }}</h5>
+                        <p class="specialty-description">{{ specialite.description }}</p>
+                        <a href="{% url 'rendez_vous_create' %}" class="btn-rdv">PRENDRE RDV</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p>Aucune spécialité n'a été ajoutée pour le moment.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Notre Équipe Section -->
+<section class="equipe py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Notre Équipe</h2>
+        <div class="row">
+            {% for membre in equipe %}
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <img src="{{ membre.photo.url }}" class="card-img-top team-member-image" alt="{{ membre.nom }}">
+                    <div class="card-body text-center">
+                        {% if membre.nom == "Ahmed El Amrani" %}
+                            <h5 class="card-title">Dr. {{ membre.nom }}</h5>
+                        {% elif membre.nom == "Fatima Zahra Benani" %}
+                            <h5 class="card-title">Mlle. {{ membre.nom }}</h5>
+                        {% else %}
+                            <h5 class="card-title">{{ membre.nom }}</h5>
+                        {% endif %}
+                        <p class="card-text">{{ membre.specialite }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Localisation Section -->
+<section class="localisation py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Notre Cabinet</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Coordonnées</h5>
+                        <p><i class="fas fa-map-marker-alt"></i> {{ adresse }}</p>
+                        <p><i class="fas fa-phone"></i> {{ telephone }}</p>
+                        <p><i class="fas fa-envelope"></i> {{ email }}</p>
+                        <h5 class="mt-4">Horaires d'ouverture</h5>
+                        <ul class="list-unstyled">
+                            <li>Lundi - Vendredi : 9h00 - 19h00</li>
+                            <li>Samedi : 9h00 - 13h00</li>
+                            <li>Dimanche : Fermé</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body p-0">
+                        <div class="map-container">
+                            <iframe 
+                                src="{{ google_maps_url }}"
+                                class="map-iframe"
+                                allowfullscreen="" 
+                                loading="lazy" 
+                                referrerpolicy="no-referrer-when-downgrade"
+                                title="Google Maps - Cabinet Dentaire">
+                            </iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %} 

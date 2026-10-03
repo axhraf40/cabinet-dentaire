@@ -1,0 +1,160 @@
+{% extends 'gestion_cabinet/base.html' %}
+
+{% block title %}Tableau de bord Dentiste - Cabinet Dentaire{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Tableau de bord Dentiste</h1>
+
+<div class="row">
+    <!-- Colonne principale -->
+    <div class="col-md-8">
+        <!-- Rendez-vous du jour -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">Rendez-vous du jour</h5>
+            </div>
+            <div class="card-body">
+                {% if rendez_vous_aujourdhui %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Heure</th>
+                                    <th>Patient</th>
+                                    <th>Motif</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for rdv in rendez_vous_aujourdhui %}
+                                    <tr>
+                                        <td>{{ rdv.date_heure|time:"H:i" }}</td>
+                                        <td>{{ rdv.patient }}</td>
+                                        <td>{{ rdv.motif }}</td>
+                                        <td>
+                                            <span class="badge {% if rdv.statut == 'PROGRAMME' %}bg-primary{% elif rdv.statut == 'TERMINE' %}bg-success{% elif rdv.statut == 'ANNULE' %}bg-danger{% else %}bg-warning{% endif %}">
+                                                {{ rdv.get_statut_display }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {% if rdv.statut == 'PROGRAMME' %}
+                                                <a href="{% url 'consultation_create' rdv.id %}" class="btn btn-sm btn-success">
+                                                    <i class="fas fa-notes-medical me-1"></i>Débuter consultation
+                                                </a>
+                                            {% elif rdv.statut == 'TERMINE' %}
+                                                <a href="{% url 'consultation_detail' rdv.consultation.id %}" class="btn btn-sm btn-info">
+                                                    <i class="fas fa-eye me-1"></i>Voir consultation
+                                                </a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-center">Vous n'avez pas de rendez-vous aujourd'hui.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Gestion des secrétaires -->
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Gestion des secrétaires</h5>
+                <a href="{% url 'secretaire_create' %}" class="btn btn-light btn-sm">
+                    <i class="fas fa-plus me-1"></i>Nouveau secrétaire
+                </a>
+            </div>
+            <div class="card-body">
+                {% if secretaires %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nom</th>
+                                    <th>Email</th>
+                                    <th>Téléphone</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for secretaire in secretaires %}
+                                    <tr>
+                                        <td>{{ secretaire.user.get_full_name }}</td>
+                                        <td>{{ secretaire.user.email }}</td>
+                                        <td>{{ secretaire.telephone }}</td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a href="{% url 'secretaire_update' secretaire.id %}" class="btn btn-sm btn-warning">
+                                                    <i class="fas fa-edit me-1"></i>Modifier
+                                                </a>
+                                                <a href="{% url 'secretaire_delete' secretaire.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce secrétaire ?')">
+                                                    <i class="fas fa-trash me-1"></i>Supprimer
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-center">Aucun secrétaire enregistré.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Colonne latérale -->
+    <div class="col-md-4">
+        <!-- Informations dentiste -->
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="card-title mb-0">Mes informations</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Nom :</strong> Dr. {{ user.get_full_name }}</p>
+                <p><strong>Spécialité :</strong> {{ user.dentiste_profile.specialite }}</p>
+                <p><strong>Email :</strong> {{ user.email }}</p>
+                <p><strong>Téléphone :</strong> {{ user.dentiste_profile.telephone }}</p>
+                <a href="{% url 'profile' %}" class="btn btn-outline-primary w-100">
+                    <i class="fas fa-user-edit me-2"></i>Modifier mon profil
+                </a>
+            </div>
+        </div>
+
+        <!-- Gestion du stock -->
+        <div class="card mb-4">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="card-title mb-0">Stock</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'stock_list' %}" class="btn btn-warning">
+                        <i class="fas fa-boxes me-2"></i>Gérer le stock
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accès rapides -->
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="card-title mb-0">Accès rapides</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'patient_list' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-users me-2"></i>Liste des patients
+                    </a>
+                    <a href="{% url 'rendez_vous_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-calendar-alt me-2"></i>Tous les rendez-vous
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

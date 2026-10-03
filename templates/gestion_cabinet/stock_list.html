@@ -1,0 +1,85 @@
+{% extends 'gestion_cabinet/base.html' %}
+
+{% block title %}Gestion du Stock - Cabinet Dentaire{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Gestion du Stock</h1>
+    <a href="{% url 'stock_create' %}" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Ajouter un produit
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Nom du produit</th>
+                        <th>Description</th>
+                        <th>Quantité</th>
+                        <th>Seuil d'alerte</th>
+                        <th>Prix unitaire</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for produit in produits %}
+                        <tr {% if produit.quantite <= produit.seuil_alerte %}class="table-warning"{% endif %}>
+                            <td>{{ produit.nom }}</td>
+                            <td>{{ produit.description }}</td>
+                            <td>
+                                <span class="badge {% if produit.quantite <= produit.seuil_alerte %}bg-warning{% else %}bg-success{% endif %}">
+                                    {{ produit.quantite }}
+                                </span>
+                            </td>
+                            <td>{{ produit.seuil_alerte }}</td>
+                            <td>{{ produit.prix_unitaire }}€</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <!-- Bouton pour ajouter du stock -->
+                                    <a href="{% url 'mouvement_stock_create' %}?produit={{ produit.id }}&type=ENTREE" class="btn btn-sm btn-success">
+                                        <i class="fas fa-plus me-1"></i>Stock
+                                    </a>
+                                    <!-- Bouton pour retirer du stock -->
+                                    <a href="{% url 'mouvement_stock_create' %}?produit={{ produit.id }}&type=SORTIE" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-minus me-1"></i>Stock
+                                    </a>
+                                    <!-- Bouton pour modifier le produit -->
+                                    <a href="{% url 'stock_update' produit.id %}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-edit me-1"></i>Modifier
+                                    </a>
+                                    <!-- Bouton pour supprimer le produit -->
+                                    <a href="{% url 'stock_delete' produit.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')">
+                                        <i class="fas fa-trash me-1"></i>Supprimer
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Légende -->
+<div class="card mt-4">
+    <div class="card-header">
+        <h5 class="card-title mb-0">Légende</h5>
+    </div>
+    <div class="card-body">
+        <div class="d-flex gap-3">
+            <div>
+                <span class="badge bg-warning me-2">!</span>
+                Stock faible (sous le seuil d'alerte)
+            </div>
+            <div>
+                <span class="badge bg-success me-2">✓</span>
+                Stock normal
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

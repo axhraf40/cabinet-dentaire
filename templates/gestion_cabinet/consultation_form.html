@@ -1,0 +1,63 @@
+{% extends 'gestion_cabinet/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {% if is_update %}
+        Modifier la consultation - Cabinet Dentaire
+    {% else %}
+        Nouvelle consultation - Cabinet Dentaire
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h4 class="card-title mb-0">
+                {% if is_update %}
+                    Modifier la consultation
+                {% else %}
+                    Nouvelle consultation
+                {% endif %}
+            </h4>
+        </div>
+        <div class="card-body">
+            <div class="mb-4">
+                <h5>Informations du patient</h5>
+                {% if is_update %}
+                    <p><strong>Patient :</strong> {{ consultation.rendez_vous.patient }}</p>
+                    <p><strong>Date :</strong> {{ consultation.rendez_vous.date_heure|date:"d/m/Y H:i" }}</p>
+                {% else %}
+                    <p><strong>Patient :</strong> {{ rendez_vous.patient }}</p>
+                    <p><strong>Date :</strong> {{ rendez_vous.date_heure|date:"d/m/Y H:i" }}</p>
+                {% endif %}
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>
+                        {% if is_update %}
+                            Enregistrer les modifications
+                        {% else %}
+                            Enregistrer la consultation
+                        {% endif %}
+                    </button>
+                    {% if is_update %}
+                        <a href="{% url 'consultation_detail' consultation.pk %}" class="btn btn-secondary">
+                            <i class="fas fa-times me-1"></i>Annuler
+                        </a>
+                    {% else %}
+                        <a href="{% url 'rendez_vous_list' %}" class="btn btn-secondary">
+                            <i class="fas fa-times me-1"></i>Annuler
+                        </a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

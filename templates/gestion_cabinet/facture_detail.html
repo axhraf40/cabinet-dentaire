@@ -1,0 +1,113 @@
+{% extends 'gestion_cabinet/base.html' %}
+
+{% block title %}Détails facture - Cabinet Dentaire{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0">Facture N° {{ facture.id }}</h4>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5>Informations du patient</h5>
+                        <p><strong>Nom :</strong> {{ facture.consultation.rendez_vous.patient }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Informations de la consultation</h5>
+                        <p><strong>Date :</strong> {{ facture.consultation.date_consultation|date:"d/m/Y H:i" }}</p>
+                        <p><strong>Dentiste :</strong> {{ facture.consultation.rendez_vous.dentiste }}</p>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h5>Détails de la facture</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th>Date d'émission</th>
+                                    <td>{{ facture.date_emission|date:"d/m/Y" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Montant</th>
+                                    <td>{{ facture.montant }} €</td>
+                                </tr>
+                                <tr>
+                                    <th>Statut</th>
+                                    <td>
+                                        <span class="badge {% if facture.statut == 'PAYE' %}bg-success{% elif facture.statut == 'ECHEC' %}bg-danger{% else %}bg-warning{% endif %}">
+                                            {{ facture.get_statut_display }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% if facture.mode_paiement %}
+                                    <tr>
+                                        <th>Mode de paiement</th>
+                                        <td>{{ facture.get_mode_paiement_display }}</td>
+                                    </tr>
+                                {% endif %}
+                                {% if facture.date_paiement %}
+                                    <tr>
+                                        <th>Date de paiement</th>
+                                        <td>{{ facture.date_paiement|date:"d/m/Y" }}</td>
+                                    </tr>
+                                {% endif %}
+                                {% if facture.reference_transaction %}
+                                    <tr>
+                                        <th>Référence transaction</th>
+                                        <td>{{ facture.reference_transaction }}</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h5>Traitement effectué</h5>
+                    <p class="border rounded p-3 bg-light">{{ facture.consultation.traitement }}</p>
+                </div>
+
+                <div class="d-grid gap-2">
+                    {% if facture.statut == 'EN_ATTENTE' and user.patient == facture.consultation.rendez_vous.patient %}
+                        <a href="{% url 'initier_paiement' facture.id %}" class="btn btn-success">
+                            <i class="fas fa-money-bill me-2"></i>Procéder au paiement
+                        </a>
+                    {% endif %}
+                    
+                    {% if facture.mode_paiement == 'ESPECES' and facture.statut == 'EN_ATTENTE' %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>{{ facture.preparer_especes }}
+                        </div>
+                    {% endif %}
+
+                    {% if user.patient %}
+                        <a href="{% url 'rendez_vous_list' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Retour aux rendez-vous
+                        </a>
+                    {% else %}
+                        <a href="{% url 'consultation_detail' facture.consultation.id %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Retour à la consultation
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if user.secretaire and facture.statut != 'PAYE' %}
+<script>
+function marquerCommePaye() {
+    if (confirm('Êtes-vous sûr de vouloir marquer cette facture comme payée ?')) {
+        window.location.href = `/facture/${facture.id}/payer/`;
+    }
+}
+</script>
+{% endif %}
+{% endblock %} 

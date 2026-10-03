@@ -1,0 +1,96 @@
+{% extends 'gestion_cabinet/base.html' %}
+
+{% block title %}Mon Profil - Cabinet Dentaire{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-circle me-2"></i>Mon Profil
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                    <div class="messages">
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="row mb-4">
+                        <div class="col-md-4 text-center">
+                            {% if user.photo_profil %}
+                                <img src="{{ user.photo_profil.url }}" alt="Photo de profil" class="img-fluid rounded-circle mb-3" style="max-width: 150px;">
+                            {% else %}
+                                <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center mb-3" style="width: 150px; height: 150px; margin: 0 auto;">
+                                    <i class="fas fa-user fa-4x"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <h5>{{ user.get_full_name }}</h5>
+                            <p class="text-muted">{{ user.get_role_display }}</p>
+                            <p><i class="fas fa-envelope me-2"></i>{{ user.email }}</p>
+                            {% if user.telephone %}
+                                <p><i class="fas fa-phone me-2"></i>{{ user.telephone }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.photo_profil.id_for_label }}" class="form-label">Photo de profil</label>
+                            {{ form.photo_profil }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.first_name.id_for_label }}" class="form-label">Prénom</label>
+                            {{ form.first_name }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.last_name.id_for_label }}" class="form-label">Nom</label>
+                            {{ form.last_name }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                            {{ form.email }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.telephone.id_for_label }}" class="form-label">Téléphone</label>
+                            {{ form.telephone }}
+                            <div class="form-text">Format: +33612345678 ou 0612345678</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.date_naissance.id_for_label }}" class="form-label">Date de naissance</label>
+                            {{ form.date_naissance }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.adresse.id_for_label }}" class="form-label">Adresse</label>
+                            {{ form.adresse }}
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Enregistrer les modifications
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
