@@ -1,5 +1,9 @@
 @echo off
 cd /d "%~dp0"
+if not exist venv\Scripts\python.exe (
+    echo === Creation de l'environnement virtuel ===
+    python -m venv venv
+)
 echo === Installation des dependances ===
 venv\Scripts\python.exe -m pip install -r requirements.txt
 echo === Creation de la base de donnees ===
