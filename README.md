@@ -3,6 +3,7 @@
 [![CI](https://github.com/axhraf40/cabinet-dentaire/actions/workflows/ci.yml/badge.svg)](https://github.com/axhraf40/cabinet-dentaire/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/Python-3.12%20%7C%203.13-blue)
 ![Django](https://img.shields.io/badge/Django-5.2%20LTS-green)
+![Licence](https://img.shields.io/badge/licence-MIT-lightgrey)
 
 Application web de gestion d'un cabinet dentaire, développée avec Django : prise de rendez-vous en ligne, dossiers patients, consultations, facturation et gestion du stock, avec un espace dédié pour chaque rôle (patient, dentiste, secrétaire).
 
@@ -106,3 +107,7 @@ lancer.bat             lancement en un clic sous Windows
 ## Limites connues
 
 Les pages `/contact/`, `/services/`, `/equipe/`, `/dentistes/` et le détail d'un rendez-vous n'ont pas encore de template HTML. Aucun lien du site n'y mène.
+
+## Licence
+
+Distribué sous licence MIT — voir [LICENSE](LICENSE).
