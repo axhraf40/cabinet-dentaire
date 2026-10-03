@@ -1,6 +1,6 @@
 # Cabinet Dentaire
 
-Application web de gestion d'un cabinet dentaire, développée avec Django 5.
+Application web de gestion d'un cabinet dentaire, développée avec Django 5.2.
 
 ## Fonctionnalités
 
